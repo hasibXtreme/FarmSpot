@@ -7,34 +7,44 @@ import jwt from 'jsonwebtoken';
 import cookieParser from 'cookie-parser';
 
 dotenv.config();
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 const jwt_secret = process.env.JWT_SECRET || 'secret_dev_key';
+const isProd = process.env.NODE_ENV === 'production';
 
+// Dynamic CORS configuration
 app.use(cookieParser());
 app.use(
   cors({
-    origin: 'http://localhost:5173',
+    origin: process.env.CLIENT_URL || 'http://localhost:5173',
     credentials: true,
   })
 );
 app.use(express.json());
 
+// Dynamic Knex DB Connection (Supabase in production / local fallback)
 const db = knex({
   client: 'pg',
-  connection: {
-    host: '127.0.0.1',
-    port: 5432,
-    user: 'Hasib',
-    password: '69420',
-    database: 'farm_db',
-  },
+  connection: process.env.DATABASE_URL
+    ? {
+        connectionString: process.env.DATABASE_URL,
+        ssl: { rejectUnauthorized: false },
+      }
+    : {
+        host: '127.0.0.1',
+        port: 5432,
+        user: 'Hasib',
+        password: 'your_local_password',
+        database: 'farm_db',
+      },
+  pool: { min: 2, max: 10 },
 });
 
 async function initdb() {
   try {
     await db.raw('SELECT 1');
-    console.log('Connected to local PostgreSQL database successfully');
+    console.log('Database connected successfully');
 
     const hastable = await db.schema.hasTable('user');
     if (!hastable) {
@@ -93,7 +103,6 @@ async function initdb() {
   }
 }
 
-// Initialize tables on application startup
 initdb();
 
 // ================= AUTH ROUTES =================
@@ -152,10 +161,11 @@ app.post('/api/login', async (req: Request, res: Response) => {
       { expiresIn: '1h' }
     );
 
+    // Cross-origin compatible cookie configuration
     res.cookie('token', token, {
       httpOnly: true,
-      sameSite: 'lax',
-      secure: false,
+      sameSite: isProd ? 'none' : 'lax',
+      secure: isProd,
       maxAge: 3600000,
     });
 
@@ -169,8 +179,8 @@ app.post('/api/login', async (req: Request, res: Response) => {
 app.post('/api/logout', async (req: Request, res: Response) => {
   res.clearCookie('token', {
     httpOnly: true,
-    sameSite: 'lax',
-    secure: false,
+    sameSite: isProd ? 'none' : 'lax',
+    secure: isProd,
   });
   return res.json({ message: 'Logged out' });
 });
