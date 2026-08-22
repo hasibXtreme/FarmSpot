@@ -1,0 +1,24 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "Back_end/src/api.ts",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "Front_end/package.json",
+      "use": "@vercel/static-build",
+      "config": { "distDir": "dist" }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "Back_end/src/api.ts"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "Front_end/$1"
+    }
+  ]
+}
