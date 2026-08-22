@@ -16,7 +16,7 @@ export const Loginpage = ({ onloginsuccess }) => {
     setIsSubmitting(true);
 
     try {
-      const response = await fetch('http://localhost:3000/api/login', {
+      const response = await fetch('/api/login', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
         credentials: 'include',
