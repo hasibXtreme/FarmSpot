@@ -21,7 +21,7 @@ export const Productpage = ({ email, role, onlogout }) => {
     setIsSubmitting(true);
 
     try {
-      const response = await fetch('http://localhost:3000/api/product', {
+      const response = await fetch('/api/product', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
         credentials: 'include',
