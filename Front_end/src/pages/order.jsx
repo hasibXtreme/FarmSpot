@@ -19,7 +19,7 @@ export const Orderpage = ({ email, role, onlogout }) => {
     setIsSubmitting(true);
 
     try {
-      const response = await fetch('http://localhost:3000/api/order', {
+      const response = await fetch('/api/order', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
         credentials: 'include',
