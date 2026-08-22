@@ -19,8 +19,8 @@ export const Homepage = ({ email, onlogout, role }) => {
 
     const endpoint =
       role === 'farmer'
-        ? 'http://localhost:3000/api/order/recent'
-        : 'http://localhost:3000/api/product/today';
+        ? '/api/order/recent'
+        : '/api/product/today';
 
     fetch(endpoint, { credentials: 'include' })
       .then((res) => res.json())
