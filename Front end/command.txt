@@ -1,1 +1,0 @@
-docker exec -it farm_db_container psql -U Hasib -d farm_db -c "DROP TABLE IF EXISTS \"user\" CASCADE;"
