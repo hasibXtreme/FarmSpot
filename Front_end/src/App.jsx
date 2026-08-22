@@ -15,7 +15,7 @@ function App() {
   const [role, setrole] = useState('');
 
   useEffect(() => {
-    fetch('http://localhost:3000/api/verify', { credentials: 'include' })
+    fetch('/api/verify', { credentials: 'include' })
       .then((res) => res.json())
       .then((data) => {
         if (data.authenticated) {
